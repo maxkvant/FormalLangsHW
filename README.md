@@ -8,4 +8,4 @@ run:
 
 output in
 
-`outputs/02/output.txt`
+`outputs/02/*`

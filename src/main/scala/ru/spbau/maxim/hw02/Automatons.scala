@@ -1,8 +1,11 @@
 package ru.spbau.maxim.hw02
 
+import java.io.{File, PrintWriter}
+
 import de.dominicscheurer.fsautils._
 import de.dominicscheurer.fsautils.RegularExpressions._
 import de.dominicscheurer.fsautils.Conversions._
+import de.dominicscheurer.fsautils.gui.GraphvizBridge
 
 object Primitives extends FSA_DSL {
   def toSymbols(chars: List[Char]): List[Symbol] = chars.map(_.toString).map(c => Symbol(c))
@@ -24,8 +27,21 @@ object Primitives extends FSA_DSL {
 object Automatons extends FSA_DSL {
   import Primitives._
 
+  def writeToFile(name: String)(action: PrintWriter => Unit): Unit = {
+    val writer = new PrintWriter(new File(name))
+    try {
+      action(writer)
+    } finally {
+      writer.close()
+    }
+  }
+
   def main(args: Array[String]): Unit = {
     List(wordsDFA, identifierDFA, resDFA).foreach(println)
+
+    writeToFile("wordsDFA.dot") { _.write(GraphvizBridge.toDot(wordsDFA)) }
+    writeToFile("identifierDFA.dot") { _.write(GraphvizBridge.toDot(identifierDFA)) }
+    writeToFile("resDFA.dot") { _.write(GraphvizBridge.toDot(resDFA)) }
   }
 
   private val words: List[String] = List("if", "then", "else", "let", "in", "true", "false")
