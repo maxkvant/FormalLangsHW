@@ -38,7 +38,7 @@ class Automatons3Test extends FlatSpec with Matchers {
     accept1("([])") should be (true)
     accept1("([1; 2; 3])") should be (true)
     accept1("(eight)") should be (true)
-    accept1("(eight, [1; 2 ; 3], 1)") should be (true)
+    accept1("( eight , [1; 2 ; 3], 1)") should be (true)
 
     accept1(")(") should be (false)
     accept1("(())") should be (false)

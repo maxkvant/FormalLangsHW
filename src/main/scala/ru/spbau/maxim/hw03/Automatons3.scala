@@ -24,7 +24,7 @@ object Automatons3 extends FSA_DSL {
   val spaces: RE = space*
   val number: RE =  spaces & (('- & digit) + digit) & (digit*) & spaces
   val arr: RE = spaces & Symbol("[") & (spaces + (number & ((Symbol(";") & number)*))) & Symbol("]") & spaces
-  val tuple_el: RE = arr + number + identifier
+  val tuple_el: RE = arr + number + (spaces & identifier & spaces)
   val tuple: RE = spaces & Symbol("(") & (spaces + (tuple_el & ((Symbol(",") & tuple_el)*))) & Symbol(")") & spaces
 
   private def simplify(nfa: NFA): DFA = nfa.removeUnreachable.toDFA.minimize.getRenamedCopy(1)
