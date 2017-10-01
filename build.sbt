@@ -8,3 +8,5 @@ unmanagedJars in Compile += file("libs/FSAUtils_GUI.jar")
 
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+
+mainClass in (Compile, run) := Some("ru.spbau.maxim.hw03.Automatons3")

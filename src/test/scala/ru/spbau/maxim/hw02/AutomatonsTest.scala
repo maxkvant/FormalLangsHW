@@ -47,5 +47,4 @@ class AutomatonsTest extends FlatSpec with Matchers {
     accept1("_a12") should be (true)
     accept1("in") should be (false)
   }
-
 }

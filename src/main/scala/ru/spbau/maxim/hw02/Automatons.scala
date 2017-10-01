@@ -22,10 +22,6 @@ object Primitives extends FSA_DSL {
     case symbols: List[Symbol] => or(symbols.map(c => c: RE))
     case chars: List[Char] => or(toSymbols(chars).map(c => c: RE))
   }
-}
-
-object Automatons extends FSA_DSL {
-  import Primitives._
 
   def writeToFile(name: String)(action: PrintWriter => Unit): Unit = {
     val writer = new PrintWriter(new File(name))
@@ -35,13 +31,17 @@ object Automatons extends FSA_DSL {
       writer.close()
     }
   }
+}
+
+object Automatons extends FSA_DSL {
+  import Primitives._
 
   def main(args: Array[String]): Unit = {
-    List(wordsDFA, identifierDFA, resDFA).foreach(println)
+    /*List(wordsDFA, identifierDFA, resDFA).foreach(println)
 
     writeToFile("wordsDFA.dot") { _.write(GraphvizBridge.toDot(wordsDFA)) }
     writeToFile("identifierDFA.dot") { _.write(GraphvizBridge.toDot(identifierDFA)) }
-    writeToFile("resDFA.dot") { _.write(GraphvizBridge.toDot(resDFA)) }
+    writeToFile("resDFA.dot") { _.write(GraphvizBridge.toDot(resDFA)) }*/
   }
 
   private val words: List[String] = List("if", "then", "else", "let", "in", "true", "false")
@@ -54,12 +54,12 @@ object Automatons extends FSA_DSL {
   private def simplify(nfa: NFA): DFA = nfa
     .extendAlphabet(alph).removeUnreachable.toDFA.minimize.getRenamedCopy(1)
 
-  val wordsDFA: DFA = simplify(or(words.map(toWordRE)).toNFA)
+  lazy val wordsDFA: DFA = simplify(or(words.map(toWordRE)).toNFA)
 
-  val identifierDFA: DFA = simplify(simplify(charSet((alph - 'digit).toList).toNFA) ++
+  lazy val identifierDFA: DFA = simplify(simplify(charSet((alph - 'digit).toList).toNFA) ++
                                     simplify((charSet(alph.toList) *).toNFA))
 
-  val resDFA: DFA = simplify(identifierDFA \ wordsDFA)
+  lazy val resDFA: DFA = simplify(identifierDFA \ wordsDFA)
 
   def accepts(dfa: DFA)(s: String): Boolean = {
     def toAlph(str: String): List[Symbol] = {
