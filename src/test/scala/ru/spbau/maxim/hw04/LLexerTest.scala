@@ -38,7 +38,7 @@ class LLexerTest extends FlatSpec with Matchers {
   }
 
   "LLexer " should
-    "parse separators" in {
+    "parse this separators" in {
     parse("(") should be(Separator("(", 0, 0) :: Nil)
     parse(")") should be(Separator(")", 0, 0) :: Nil)
     parse(",") should be(Separator(",", 0, 0) :: Nil)
@@ -46,11 +46,32 @@ class LLexerTest extends FlatSpec with Matchers {
   }
 
   "LLexer " should
-    "parse literals" in {
+    "parse this literals" in {
     parse("true") should be(Bool("true", 0, 3) :: Nil)
     parse("false") should be(Bool("false", 0, 4) :: Nil)
     parse("1.0") should be(FloatNumber("1.0", 0, 2) :: Nil)
     parse("12.3f") should be(FloatNumber("12.3f", 0, 4) :: Nil)
     parse("0.3e-5") should be(FloatNumber("0.3e-5", 0, 5) :: Nil)
+  }
+
+  "LLexer " should
+    "parse this expressions" in {
+    parse("_ < _\n") should be(Identifier("_", 0, 0) :: Operator("<", 2, 2) :: Identifier("_", 4, 4) :: Nil)
+    parse("read x ; if y + 1.0 == x then write y else write x") should matchPattern {
+      case KeyWord("read", _, _) :: Identifier("x", _, _) :: Separator(";", _, _) ::
+        KeyWord("if", _, _) :: Identifier("y", _, _) :: Operator("+", _, _) :: FloatNumber("1.0", _, _) ::
+        Operator("==", _, _) :: Identifier("x", _, _) ::
+        KeyWord("then", _, _) :: KeyWord("write", _, _) :: Identifier("y", _, _) ::
+        KeyWord("else", _, _) :: KeyWord("write", _, _) :: Identifier("x", _, _) :: Nil =>
+    }
+    parse("read zемля //земля в иллюминаторе \n write z // земля в иллюминаторе \r// земля в иллюминаторе видна\n") should
+      matchPattern {
+        case KeyWord("read", _, _) :: Identifier("zемля", _, _) ::
+          Comment("земля в иллюминаторе ", _, _) :: KeyWord("write", _, _) :: Identifier("z", _, _) ::
+          Comment(" земля в иллюминаторе ", _, _) ::
+          Comment(" земля в иллюминаторе видна", _, _) :: Nil =>
+      }
+
+
   }
 }

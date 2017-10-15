@@ -26,7 +26,7 @@ object LLexer {
         case ctx1: LParser.KeyWordContext => Some(KeyWord(str, l, r))
         case ctx1: LParser.OperatorContext => Some(Operator(str, l, r))
         case ctx1: LParser.FloatNumerContext => Some(FloatNumber(str, l, r))
-        case ctx1: LParser.CommentContext => Some(Comment(str.substring(2, str.length - 2), l, r))
+        case ctx1: LParser.CommentContext => Some(Comment(str.substring(2, str.length), l, r))
         case ctx1: LParser.BoolContext => Some(Bool(str, l, r))
         case _ => None
       }
