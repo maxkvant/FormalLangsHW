@@ -51,10 +51,9 @@ object LLexer {
   }
 
   def main(args: Array[String]): Unit = {
-    //require(args.size == 1)
-    val fileName = "file.txt"
-    //args(0)
-    val str = scala.io.Source.fromFile("file.txt").mkString
+    require(args.size == 1)
+    val filePath = args(0)
+    val str = scala.io.Source.fromFile(filePath).mkString
     val res = parse(str)
     for (x <- res) {
       println(x)

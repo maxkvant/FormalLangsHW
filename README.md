@@ -1,17 +1,12 @@
 # FormalLangsHW
 
-### hw02
 
-output in
-
-`outputs/02/*`
-
-### hw03
+### L Lexer
 
 run:
 
-`sbt run`
+`sbt "run path_to_file"`
 
-output in
+example:
 
-`outputs/03/*`
+`sbt "run file.txt"`
