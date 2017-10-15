@@ -1,4 +1,4 @@
-name := "automaton"
+name := "fl"
 
 version := "0.2"
 

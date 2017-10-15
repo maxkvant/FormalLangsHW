@@ -2,51 +2,63 @@ package ru.spbau.maxim.hw04
 
 import com.simplytyped._
 import org.antlr.v4.runtime._
+import org.antlr.v4.runtime.tree._
+
+import scala.collection.mutable.ArrayBuffer
 
 object LLexer {
-  def jsonExample(): Unit = {
-    val jsonStr: String = """
-                            |{
-                            |  "student":
-                            |  {
-                            |    "id" : "12345678",
-                            |    "prename" : "John",
-                            |    "surname" : "Doe",
-                            |    "address" :
-                            |	   {
-                            |	     "street" : "Johndoestreet",
-                            |	     "postcode" : "99999"
-                            |	   },
-                            |    "email"   : "johndoe@doe.com"
-                            |  }
-                            |}
-                          """.stripMargin
-    println(jsonStr)
-    val input = new ANTLRInputStream(jsonStr)
-    val lexer = new JSONLexer(input)
-    val tokens = new CommonTokenStream(lexer)
-    val parser = new JSONParser(tokens)
-    val tree = parser.json
-    val treeStr = tree.toStringTree(parser)
-    println(treeStr)
-  }
-
-  def lExample(): Unit = {
-    val lStr = "read xx xx ; // asdf[] \n if y + 1 == xx then write y else write xx\n"
+  def parse(lStr: String): List[Token] = {
     print(lStr)
     val input = new ANTLRInputStream(lStr)
     val lexer = new LLexer(input)
-    val tokens = new CommonTokenStream(lexer)
-    val parser = new LParser(tokens)
+    val lexerTokens = new CommonTokenStream(lexer)
+    val parser = new LParser(lexerTokens)
     val tree = parser.l
-    val treeStr = tree.toStringTree(parser)
-    println(treeStr)
+
+    val tokens = new ArrayBuffer[Token]
+
+    def addRule(ctx: ParserRuleContext): Unit = {
+      val str: String = ctx.getText
+      val l = ctx.start.getStartIndex
+      val r = ctx.stop.getStopIndex
+      val cur: Option[Token] = ctx match {
+        case ctx1: LParser.SeparatorContext => Some(Separator(str, l, r))
+        case ctx1: LParser.IdentifierContext => Some(Identifier(str, l, r))
+        case ctx1: LParser.KeyWordContext => Some(KeyWord(str, l, r))
+        case ctx1: LParser.OperatorContext => Some(Operator(str, l, r))
+        case ctx1: LParser.FloatNumerContext => Some(FloatNumber(str, l, r))
+        case ctx1: LParser.CommentContext => Some(Comment(str.substring(2, str.length - 2), l, r))
+        case ctx1: LParser.BoolContext => Some(Bool(str, l, r))
+        case _ => None
+      }
+      cur.foreach(token => tokens += token)
+    }
+
+    def visitTree(tree: Tree): Unit = {
+      val n = tree.getChildCount
+      for (i <- 0 until n) {
+        visitTree(tree.getChild(i))
+      }
+      tree.getPayload match {
+        case ctx: ParserRuleContext => addRule(ctx)
+        case _ =>
+      }
+    }
+
+    visitTree(tree)
+
+    tokens.toList
   }
 
   def main(args: Array[String]): Unit = {
-    //jsonExample()
-    lExample()
+    //require(args.size == 1)
+    val fileName = "file.txt"
+    //args(0)
+    val str = scala.io.Source.fromFile("file.txt").mkString
+    val res = parse(str)
+    for (x <- res) {
+      println(x)
+    }
   }
-
 
 }

@@ -1,0 +1,2 @@
+ read xx xx ; // asdf[]
+ if y + 1.0 == x then write y else write x

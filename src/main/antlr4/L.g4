@@ -1,26 +1,12 @@
 grammar L;
 
+l: (comment | keyWord | literal | separator | operator| identifier)* EOF;
 
+comment: LineComment ;
+LineComment:  '//' ~[\n\r]* ;
 
-l: (keyWord | literal | comment | separator | operator| identifier)*? endLine ;
-
-
-endLine: '\n'
-       | '\r\n'
-       | '\r'
-       ;
-
-comment:  COMMENT_START NOT_ENDL* endLine;
-COMMENT_START: '//';
-NOT_ENDL: ~('\n' | '\r') ;
-ENDL_SYMBOL: [\n\r];
-
-identifier: IDENTIFIER ;
-IDENTIFIER:  INDENT_START NOT_WS* ;
-fragment INDENT_START: ('_' | [a-zA-Z]) ;
-
-WS  :   [ \t\f]+ -> skip ;
-fragment NOT_WS: ~('\t' | '\n' | '\r' | '\f' | ' ') ;
+identifier: Identifier ;
+Identifier: [_a-zA-Z] ~[ \t\n\r]* ;
 
 keyWord: 'if'
        | 'then'
@@ -33,12 +19,14 @@ keyWord: 'if'
        | 'end'
        ;
 
-literal: 'true'
-       | 'false'
-       | INT
+literal: bool
+       | floatNumer
        ;
 
-separator: '(' | ')' | ',' | ';' ;
+bool: 'true' | 'false' ;
+
+separator: Separator;
+Separator: [()|,;] ;
 
 operator: '+'
         | '-'
@@ -55,5 +43,93 @@ operator: '+'
         | '||'
         ;
 
-INT: '-'? N0 ;
-fragment N0 : '0' | [1-9] [0-9]* ;
+WS  :  [ \t\r\n]+ -> skip
+    ;
+
+floatNumer: FloatingPointLiteral;
+
+//@see https://github.com/antlr/grammars-v4/blob/master/java/Java.g4
+
+Digits
+    :   [0-9] ([0-9_]* [0-9])?
+    ;
+
+FloatingPointLiteral
+    :   DecimalFloatingPointLiteral
+    |   HexadecimalFloatingPointLiteral
+    ;
+
+fragment
+DecimalFloatingPointLiteral
+    :   Digits '.' Digits? ExponentPart? FloatTypeSuffix?
+    |   '.' Digits ExponentPart? FloatTypeSuffix?
+    |   Digits ExponentPart FloatTypeSuffix?
+    |   Digits FloatTypeSuffix
+    ;
+
+fragment
+ExponentPart
+    :   ExponentIndicator SignedInteger
+    ;
+
+fragment
+ExponentIndicator
+    :   [eE]
+    ;
+
+fragment
+SignedInteger
+    :   Sign? Digits
+    ;
+
+fragment
+Sign
+    :   [+-]
+    ;
+
+fragment
+FloatTypeSuffix
+    :   [fFdD]
+    ;
+
+fragment
+HexadecimalFloatingPointLiteral
+    :   HexSignificand BinaryExponent FloatTypeSuffix?
+    ;
+
+fragment
+HexSignificand
+    :   HexNumeral '.'?
+    |   '0' [xX] HexDigits? '.' HexDigits
+    ;
+
+fragment
+BinaryExponent
+    :   BinaryExponentIndicator SignedInteger
+    ;
+
+fragment
+BinaryExponentIndicator
+    :   [pP]
+    ;
+
+fragment
+HexNumeral
+    :   '0' [xX] HexDigits
+    ;
+
+fragment
+HexDigits
+    :   HexDigit (HexDigitOrUnderscore* HexDigit)?
+    ;
+
+fragment
+HexDigit
+    :   [0-9a-fA-F]
+    ;
+
+fragment
+HexDigitOrUnderscore
+    :   HexDigit
+    |   '_'
+    ;
