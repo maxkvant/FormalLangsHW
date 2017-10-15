@@ -8,7 +8,6 @@ import scala.collection.mutable.ArrayBuffer
 
 object LLexer {
   def parse(lStr: String): List[Token] = {
-    print(lStr)
     val input = new ANTLRInputStream(lStr)
     val lexer = new LLexer(input)
     val lexerTokens = new CommonTokenStream(lexer)
@@ -51,7 +50,7 @@ object LLexer {
   }
 
   def main(args: Array[String]): Unit = {
-    require(args.size == 1)
+    require(args.length == 1)
     val filePath = args(0)
     val str = scala.io.Source.fromFile(filePath).mkString
     val res = parse(str)
@@ -59,5 +58,4 @@ object LLexer {
       println(x)
     }
   }
-
 }

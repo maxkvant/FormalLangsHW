@@ -43,7 +43,7 @@ operator: '+'
         | '||'
         ;
 
-WS  :  [ \t\r\n]+ -> skip
+WS  :  [ \t\r\n\f]+ -> skip
     ;
 
 floatNumer: FloatingPointLiteral;
