@@ -41,7 +41,6 @@ class LLexerTest extends FlatSpec with Matchers {
     "parse this separators" in {
     parse("(") should be(Separator("(", 0, 0) :: Nil)
     parse(")") should be(Separator(")", 0, 0) :: Nil)
-    parse(",") should be(Separator(",", 0, 0) :: Nil)
     parse(";") should be(Separator(";", 0, 0) :: Nil)
   }
 
@@ -64,10 +63,10 @@ class LLexerTest extends FlatSpec with Matchers {
         KeyWord("then", _, _) :: KeyWord("write", _, _) :: Identifier("y", _, _) ::
         KeyWord("else", _, _) :: KeyWord("write", _, _) :: Identifier("x", _, _) :: Nil =>
     }
-    parse("read zемля //земля в иллюминаторе \n write z // земля в иллюминаторе \r// земля в иллюминаторе видна\n") should
+    parse("read zемля //земля в иллюминаторе \n write Z // земля в иллюминаторе \r// земля в иллюминаторе видна\n") should
       matchPattern {
         case KeyWord("read", _, _) :: Identifier("zемля", _, _) ::
-          Comment("земля в иллюминаторе ", _, _) :: KeyWord("write", _, _) :: Identifier("z", _, _) ::
+          Comment("земля в иллюминаторе ", _, _) :: KeyWord("write", _, _) :: Identifier("Z", _, _) ::
           Comment(" земля в иллюминаторе ", _, _) ::
           Comment(" земля в иллюминаторе видна", _, _) :: Nil =>
       }

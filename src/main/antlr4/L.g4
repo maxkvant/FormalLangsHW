@@ -26,7 +26,7 @@ literal: bool
 bool: 'true' | 'false' ;
 
 separator: Separator;
-Separator: [()|,;] ;
+Separator: [();] ;
 
 operator: '+'
         | '-'
