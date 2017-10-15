@@ -1,1 +1,0 @@
-addSbtPlugin("com.github.3tty0n" % "sbt-jflex-scala" % "0.3.0")
