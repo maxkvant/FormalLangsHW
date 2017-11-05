@@ -14,8 +14,6 @@ trait Grammar {
   }
 }
 
-case class SimpleGrammar(start: NonTerminal, rules: Seq[(NonTerminal, Seq[GrammarSymbol])]) extends Grammar
-
 object Grammar {
   type Word = Seq[GrammarSymbol]
   type Rule = (NonTerminal, Word)

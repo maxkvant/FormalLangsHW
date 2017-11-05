@@ -13,7 +13,7 @@ class CYK(grammar: ChomskyNF) {
 
   def apply(s: String): Boolean = {
     if (s.isEmpty) {
-      grammar.rules.contains((grammar.start, Seq(Eps())))
+      grammar.startSymbols.contains(Eps())
     } else {
       val n = s.length
       val dp = Array.fill[Set[NonTerminal]](n+1, n+1)(Set())

@@ -53,7 +53,7 @@ object ChomskyNF {
       }
       (nonTerminal, modifiedWord)
     }) ++ terminalMap.map({case (terminal, nonTerminal) => (nonTerminal, Seq(terminal))})
-    SimpleGrammar(grammar.start, newRules)
+    new SimpleGrammar(grammar.start, newRules)
   }
 
   def ReduceLongRules(grammar: Grammar)(implicit nonTerminalGen: NonTerminalGen): Grammar = {
