@@ -18,8 +18,8 @@ object Main {
     println(nf)
 
     val cyk = new CYK(nf)
-    println(cyk.checkWord("", nf))
-    println(cyk.checkWord("[][[[]]]", nf))
-    println(cyk.checkWord("[][[]", nf))
+    println(cyk(""))
+    println(cyk("[][[[]]]"))
+    println(cyk("[][[]"))
   }
 }

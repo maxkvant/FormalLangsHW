@@ -1,29 +1,17 @@
 package ru.spbau.maxim.hw06
 
-class CYK(grammar: Grammar) {
-  private val rulesSingleGroups: Map[Terminal, Set[NonTerminal]] = grammar.rules
-    .filter({case (nonTerminal, word) => word.size == 1 && nonTerminal != grammar.start})
-    .map({case (nonTerminal, word) => (nonTerminal, word.head.asInstanceOf[Terminal]) })
+class CYK(grammar: ChomskyNF) {
+  private val rulesSingleGroups: Map[Terminal, Set[NonTerminal]] = grammar.terminalRules
     .groupBy(_._2)
     .mapValues(_.map(_._1).toSet)
     .withDefault(_ => Set())
 
-  private val rulesBinary: Seq[(NonTerminal, (NonTerminal, NonTerminal))] = grammar.rules
-    .filter({case (nonTerminal, word) => word.size == 2 })
-    .map({case (nonTerminal, word) =>
-      (nonTerminal, (word(0).asInstanceOf[NonTerminal], word(1).asInstanceOf[NonTerminal]))
-    })
-
-  private val rulesBinaryGroups: Map[(NonTerminal, NonTerminal), Set[NonTerminal]] = rulesBinary
+  private val rulesBinaryGroups: Map[(NonTerminal, NonTerminal), Set[NonTerminal]] = grammar.nonTerminalRules
     .groupBy(_._2)
     .mapValues(_.map(_._1).toSet)
     .withDefault(_ => Set())
 
-  private val wordsStart: Set[Seq[GrammarSymbol]] = grammar.rules
-    .filter({case (nonTerminal, word) => nonTerminal == grammar.start})
-    .map(_._2).toSet
-
-  def checkWord(s: String, grammar: Grammar): Boolean = {
+  def apply(s: String): Boolean = {
     if (s.isEmpty) {
       grammar.rules.contains((grammar.start, Seq(Eps())))
     } else {
@@ -46,7 +34,7 @@ class CYK(grammar: Grammar) {
         } yield rulesBinaryGroups((n1, n2))))(_ ++ _)
       }
 
-      dp(n)(0).exists(nonTerminal => wordsStart.contains(Seq(nonTerminal)))
+      dp(n)(0).exists(grammar.startSymbols.contains(_))
     }
   }
 }

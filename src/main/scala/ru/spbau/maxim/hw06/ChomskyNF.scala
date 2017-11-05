@@ -1,5 +1,8 @@
 package ru.spbau.maxim.hw06
 
+import ru.spbau.maxim.hw06.ChomskyNF.{NonTerminalRule, TerminalRule}
+import ru.spbau.maxim.hw06.Grammar.Rule
+
 import scala.collection.{immutable, mutable}
 
 object ChomskyNF {
@@ -13,7 +16,7 @@ object ChomskyNF {
     }
   }
 
-  def toNF(grammar: Grammar): Grammar = {
+  def toNF(grammar: Grammar): ChomskyNF = {
     implicit val nonTerminalGen: NonTerminalGen = new NonTerminalGen
 
     val grammar1 = ReduceLongRules(grammar)
@@ -21,12 +24,20 @@ object ChomskyNF {
     val grammar3 = reduceTerminals(grammar2)
     val grammarCur = RemoveUnitRules(grammar3)
 
-    if (needS1) {
-      val newStart = StringNonTerminal("S'")
-      SimpleGrammar(newStart, grammarCur.rules ++ Seq(newStart -> Seq(Eps()), newStart -> Seq(grammarCur.start)))
-    } else {
-      grammarCur
-    }
+    val terminalRules: Seq[TerminalRule] = grammarCur.rules
+      .filter({case (nonTerminal, word) => word.size == 1})
+      .map({case (nonTerminal, word) => (nonTerminal, word.head.asInstanceOf[Terminal]) })
+
+    val nonTerminalRules: Seq[NonTerminalRule] = grammarCur.rules
+      .filter({case (nonTerminal, word) => word.size == 2 })
+      .map({case (nonTerminal, word) =>
+        (nonTerminal, (word.head.asInstanceOf[NonTerminal], word(1).asInstanceOf[NonTerminal]))
+      })
+
+    require(grammarCur.rules.size == nonTerminalRules.size + terminalRules.size)
+
+    val start: Seq[GrammarSymbol] = if (needS1) Seq(grammar.start, Eps()) else Seq(grammar.start)
+    ChomskyNF(start, nonTerminalRules, terminalRules)
   }
 
   def reduceTerminals(grammar: Grammar)(implicit nonTerminalGen: NonTerminalGen): Grammar = {
@@ -145,10 +156,23 @@ object ChomskyNF {
     }).toSeq
     SimpleGrammar(grammar.start, newRules)
   }
-  
+
   def isChomskyNF(grammar: Grammar): Boolean = {
     true
   }
+
+  type TerminalRule = (NonTerminal, Terminal)
+  type NonTerminalRule = (NonTerminal, (NonTerminal, NonTerminal))
 }
 
-class ChomskyNF
+case class ChomskyNF(startSymbols: Seq[GrammarSymbol],
+                     nonTerminalRules: Seq[NonTerminalRule],
+                     terminalRules: Seq[TerminalRule]) extends Grammar {
+  override val rules: Seq[Rule] = {
+    terminalRules.map({case (nonTerminal, terminal) => (nonTerminal, Seq(terminal))}) ++
+      nonTerminalRules.map({case (nonTerminal, (a, b)) => (nonTerminal, Seq(a, b))}) ++
+      startSymbols.map({symbol => (start, Seq(symbol))})
+  }
+
+  override def start = StringNonTerminal("S1")
+}
