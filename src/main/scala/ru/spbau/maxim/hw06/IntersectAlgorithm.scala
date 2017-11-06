@@ -8,7 +8,7 @@ import scala.collection.mutable
 
 object IntersectAlgorithm {
   def apply(grammar: Grammar, graph: MutableGraph): ChomskyNF = {
-    solveChomskyNF(ChomskyNF.toNF(grammar), graph)
+    solveChomskyNF(ChomskyNF(grammar), graph)
   }
 
   def solveChomskyNF(grammar: ChomskyNF, graph: MutableGraph): ChomskyNF = {
@@ -65,9 +65,7 @@ object IntersectAlgorithm {
         }
       }
     }
-
     dfs(node)
-    readable -= node
     readable.toSet
   }
 
@@ -75,7 +73,7 @@ object IntersectAlgorithm {
     node.links().asScala.map(toEdge).toSeq
   }
 
-  private implicit def toEdge(link: Link): Edge = {
+  private def toEdge(link: Link): Edge = {
     val to: MutableNode = link.to().asInstanceOf[MutableNodePoint].node()
     val from: MutableNode = link.from().asInstanceOf[MutableNodePoint].node()
 

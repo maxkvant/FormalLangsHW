@@ -15,7 +15,7 @@ object ChomskyNF {
     }
   }
 
-  def toNF(grammar: Grammar): ChomskyNF = {
+  def apply(grammar: Grammar): ChomskyNF = {
     implicit val nonTerminalGen: NonTerminalGen = new NonTerminalGen
 
     val grammar1 = ReduceLongRules(grammar)
