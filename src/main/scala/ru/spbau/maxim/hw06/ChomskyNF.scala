@@ -1,13 +1,12 @@
 package ru.spbau.maxim.hw06
 
 import ru.spbau.maxim.hw06.ChomskyNF.{NonTerminalRule, TerminalRule}
-import ru.spbau.maxim.hw06.Grammar.Rule
+import ru.spbau.maxim.hw06.Grammar.{Rule, _}
 
-import scala.collection.{immutable, mutable}
+import scala.collection.mutable
+
 
 object ChomskyNF {
-  import Grammar._
-  
   class NonTerminalGen {
     private var num = 0
     def apply(): NonTerminal = {
@@ -36,7 +35,7 @@ object ChomskyNF {
 
     require(grammarCur.rules.size == nonTerminalRules.size + terminalRules.size)
 
-    val start: Seq[GrammarSymbol] = if (needS1) Seq(grammar.start, Eps()) else Seq(grammar.start)
+    val start: Seq[GrammarSymbol] = if (needS1) Seq(grammar.start, Eps) else Seq(grammar.start)
     ChomskyNF(start, nonTerminalRules, terminalRules)
   }
 
@@ -53,7 +52,7 @@ object ChomskyNF {
       }
       (nonTerminal, modifiedWord)
     }) ++ terminalMap.map({case (terminal, nonTerminal) => (nonTerminal, Seq(terminal))})
-    new SimpleGrammar(grammar.start, newRules)
+    SimpleGrammar(grammar.start, newRules)
   }
 
   def ReduceLongRules(grammar: Grammar)(implicit nonTerminalGen: NonTerminalGen): Grammar = {
@@ -79,7 +78,7 @@ object ChomskyNF {
     val epsRules: Set[NonTerminal] = {
       val curEpsRules: mutable.Set[NonTerminal] = mutable.Set()
       def checkWord(word: Word): Boolean = word.forall {
-        case symbol: Eps => true
+        case Eps => true
         case symbol: NonTerminal => curEpsRules(symbol)
         case _ => false
       }
@@ -96,7 +95,7 @@ object ChomskyNF {
     }.toSet
 
     val newRules: Seq[Rule] = grammar.rules.flatMap({case (nonTerminal, word) =>
-      val word2 = word.filter(!_.isInstanceOf[Eps])
+      val word2 = word.filter(_ != Eps)
       def gen(word : List[GrammarSymbol]): List[List[GrammarSymbol]] = {
         word match {
           case Nil => List(Nil)

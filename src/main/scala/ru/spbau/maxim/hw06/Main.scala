@@ -1,23 +1,36 @@
 package ru.spbau.maxim.hw06
 
-import ru.spbau.maxim.hw06.ChomskyNF.NonTerminalGen
+import java.io.FileInputStream
 
-import uk.co.turingatemyhamster.graphvizs._
-import uk.co.turingatemyhamster.graphvizs.dsl._
-import uk.co.turingatemyhamster.graphvizs.exec._
+import guru.nidi.graphviz.model.MutableGraph
+import guru.nidi.graphviz.parse.Parser
+import ru.spbau.maxim.hw06.ChomskyNF.NonTerminalGen
+import ru.spbau.maxim.hw06.Grammar.toLine
+
+import scala.io.Source
 
 object Main {
   import Conversions._
   def main(args: Array[String]): Unit = {
-    val grammarFile = args(0)
-    val grammarDotFile = args(1)
+    val grammarFile = "grammar.txt"
+    val grammarFileLines = Source.fromFile(grammarFile).getLines().toList
+    val graphDotFile = "automaton.dot"
+
+    val grammar = GrammarParser.parseRules(grammarFileLines)
+    val graph: MutableGraph = Parser.read(new FileInputStream(graphDotFile))
+
+    println(grammar)
+    grammar.rules.map(toLine).foreach(println)
+    println(graph)
+
+    example1()
   }
 
   def example1(): Unit = {
     val rules: Seq[(NonTerminal, Seq[GrammarSymbol])]= Seq(
       ("S", Seq("S", "S")),
       ("S", Seq('[', "S", ']')),
-      ("S", Seq(Eps()))
+      ("S", Seq(Eps))
     )
 
     val nonTerminalGen: NonTerminalGen = new ChomskyNF.NonTerminalGen

@@ -17,6 +17,10 @@ trait Grammar {
 object Grammar {
   type Word = Seq[GrammarSymbol]
   type Rule = (NonTerminal, Word)
+
+  def toLine(rule: Rule): String = rule match {
+    case (nonTerminal, word) => s"$nonTerminal: ${word.mkString(" ")}"
+  }
 }
 
 
