@@ -14,6 +14,10 @@ object Main {
   def main(args: Array[String]): Unit = {
     if (args.length != 3) {
       println("Usage: sbt \"run grammarFile graphFile.dot outputFile\"")
+      example1()
+      println()
+
+      example2()
     } else {
       val grammarFile = args(0)
       val graphDotFile = args(1)
@@ -45,9 +49,22 @@ object Main {
     val nf = ChomskyNF.toNF(grammar)
     println(nf)
 
-    val cyk = new CYK(nf)
+    val cyk = CYK(nf)
     println(cyk(""))
     println(cyk("[][[[]]]"))
     println(cyk("[][[]"))
+  }
+
+  def example2(): Unit = {
+    val grammarFile = "grammar.txt"
+    val graphDotFile = "automaton.dot"
+
+    val grammarFileLines = Source.fromFile(grammarFile).getLines().toList
+    val grammar = GrammarParser.parseRules(grammarFileLines)
+    val graph: MutableGraph = Parser.read(new FileInputStream(graphDotFile))
+
+    val resGrammar = IntersectAlgorithm(grammar, graph)
+    val cyk = CYK(resGrammar)
+    println(cyk("aacbb"))
   }
 }

@@ -157,10 +157,6 @@ object ChomskyNF {
     SimpleGrammar(grammar.start, newRules)
   }
 
-  def isChomskyNF(grammar: Grammar): Boolean = {
-    true
-  }
-
   type TerminalRule = (NonTerminal, Terminal)
   type NonTerminalRule = (NonTerminal, (NonTerminal, NonTerminal))
 }

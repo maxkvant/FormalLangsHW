@@ -1,6 +1,6 @@
 package ru.spbau.maxim.hw06
 
-class CYK(grammar: ChomskyNF) {
+case class CYK(grammar: ChomskyNF) {
   private val rulesSingleGroups: Map[Char, Set[NonTerminal]] = grammar.terminalRules
     .groupBy(_._2.char)
     .mapValues(_.map(_._1).toSet)
