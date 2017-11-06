@@ -14,10 +14,6 @@ object Main {
   def main(args: Array[String]): Unit = {
     if (args.length != 3) {
       println("Usage: sbt \"run grammarFile graphFile.dot outputFile\"")
-      example1()
-      println()
-
-      example2()
     } else {
       val grammarFile = args(0)
       val graphDotFile = args(1)
