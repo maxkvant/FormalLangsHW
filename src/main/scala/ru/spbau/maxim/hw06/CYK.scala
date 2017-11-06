@@ -1,8 +1,8 @@
 package ru.spbau.maxim.hw06
 
 class CYK(grammar: ChomskyNF) {
-  private val rulesSingleGroups: Map[Terminal, Set[NonTerminal]] = grammar.terminalRules
-    .groupBy(_._2)
+  private val rulesSingleGroups: Map[Char, Set[NonTerminal]] = grammar.terminalRules
+    .groupBy(_._2.char)
     .mapValues(_.map(_._1).toSet)
     .withDefault(_ => Set())
 
@@ -19,7 +19,7 @@ class CYK(grammar: ChomskyNF) {
       val dp = Array.fill[Set[NonTerminal]](n+1, n+1)(Set())
 
       for (l <- 0 until n) {
-        dp(1)(l) = rulesSingleGroups(CharTerminal(s(l)))
+        dp(1)(l) = rulesSingleGroups(s(l))
       }
 
       for (len <- 2 to n;

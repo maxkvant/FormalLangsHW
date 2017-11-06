@@ -22,13 +22,11 @@ object GrammarParser extends JavaTokenParsers {
     case nonTerminal ~ _ ~ word => (nonTerminal, word)
   }
 
-  private def word: Parser[Word] = rep(terminal | nonTerminal)
+  private def word: Parser[Word] = rep(eps | terminal | nonTerminal)
 
-  private def terminal: Parser[Terminal] = eps | charTerminal
+  private def terminal: Parser[CharTerminal] = """[a-z]""".r ^^ { str => CharTerminal(str.head) }
 
-  private def charTerminal: Parser[CharTerminal] = """[a-z]""".r ^^ { str => CharTerminal(str.head) }
-
-  private def eps: Parser[Terminal] = "eps" ^^ { _ => Eps }
+  private def eps: Parser[GrammarSymbol] = "eps" ^^ { _ => Eps }
 
   private def nonTerminal: Parser[NonTerminal] = """[A-Z]""".r ^^ { str => StringNonTerminal(str) }
 }

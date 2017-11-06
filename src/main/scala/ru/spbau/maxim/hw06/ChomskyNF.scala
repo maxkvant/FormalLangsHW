@@ -74,6 +74,7 @@ object ChomskyNF {
     })
       .groupBy(_._1)
       .mapValues(_.map({case (symbol, word, nonTerminal) => (nonTerminal, word)}))
+      .withDefault(_ => Seq())
 
     val epsRules: Set[NonTerminal] = {
       val curEpsRules: mutable.Set[NonTerminal] = mutable.Set()
@@ -167,10 +168,12 @@ object ChomskyNF {
 case class ChomskyNF(startSymbols: Seq[GrammarSymbol],
                      nonTerminalRules: Seq[NonTerminalRule],
                      terminalRules: Seq[TerminalRule]) extends Grammar {
+  require(startSymbols.count(_.isInstanceOf[NonTerminal]) > 0)
+
   override val rules: Seq[Rule] = {
-    terminalRules.map({case (nonTerminal, terminal) => (nonTerminal, Seq(terminal))}) ++
+    startSymbols.map({ symbol => (start, Seq(symbol)) }) ++
       nonTerminalRules.map({case (nonTerminal, (a, b)) => (nonTerminal, Seq(a, b))}) ++
-      startSymbols.map({symbol => (start, Seq(symbol))})
+      terminalRules.map({ case (nonTerminal, terminal) => (nonTerminal, Seq(terminal)) })
   }
 
   override def start = StringNonTerminal("S1")
