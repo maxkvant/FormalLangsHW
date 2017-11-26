@@ -10,3 +10,5 @@ run:
 example:
 
 `sbt "run file.txt"`
+
+outputs: `output.dot` `pngs/output.png`

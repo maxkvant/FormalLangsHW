@@ -9,19 +9,18 @@ import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream}
 
 object Main {
   def main(args: Array[String]): Unit = {
-    //require(args.length == 1)
-    val filePath = "file.txt"
-    //args(0)
+    require(args.length == 1)
+    val filePath = args(0)
     val str = scala.io.Source.fromFile(filePath).mkString
     val tree = parse(str)
     val res = Printer.toStr(parse(str))
-
-    outputPng(res)
 
     import java.io._
     val pw = new PrintWriter(new File("output.dot"))
     pw.write(res)
     pw.close()
+
+    outputPng(res)
   }
 
   def outputPng(dotStr: String): Unit = {
