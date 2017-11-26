@@ -8,11 +8,17 @@ object Token {
 
 import ru.spbau.maxim.hw07.Token._
 
-class Identifier(val name: String, l: Int, r: Int) extends Token(l, r)
-
-//Expressions
 
 sealed abstract class Token(val l: Int, val r: Int)
+
+case class Identifier(name: String,
+                      override val l: Int, override val r: Int) extends Token(l, r)
+
+case class Program(functions: Functions,
+                   body: Statements,
+                   override val l: Int, override val r: Int) extends Token(l, r)
+
+//Expressions
 
 sealed abstract class Expr(l: Int, r: Int) extends Token(l, r)
 
@@ -30,7 +36,9 @@ case class IntLiteral(value: Int,
 
 sealed abstract class Statement(l: Int, r: Int) extends Token(l, r)
 
-class Assignment(val identifier: Identifier, val expr: Expr, l: Int, r: Int) extends Statement(l, r)
+case class Assignment(identifier: Identifier,
+                      expr: Expr,
+                      override val l: Int, override val r: Int) extends Statement(l, r)
 
 case class While(condition: Expr,
                  statements: Statements,
@@ -38,6 +46,10 @@ case class While(condition: Expr,
 
 case class Read(identifier: Identifier,
                 override val l: Int, override val r: Int) extends Statement(l, r)
+
+case class Write(expr: Expr,
+                 override val l: Int, override val r: Int) extends Statement(l, r)
+
 
 case class IfNoElse(condition: Expr,
                     statements: Statements,
@@ -48,7 +60,7 @@ case class IfElse(condition: Expr,
                   statementsElse: Statements,
                   override val l: Int, override val r: Int) extends Statement(l, r)
 
-//Function
+//Functions
 
 case class Function(name: Identifier,
                     params: Params,
@@ -57,8 +69,3 @@ case class Function(name: Identifier,
 
 case class FunctionCall(name: Identifier, params: Params,
                         override val l: Int, override val r: Int) extends Statement(l, r)
-
-//Program
-case class Program(functions: Functions,
-                   body: Statements,
-                   override val l: Int, override val r: Int) extends Token(l, r)

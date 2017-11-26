@@ -1,6 +1,6 @@
 grammar L;
 
-programm: function* blockWithBraces
+program: function* blockWithBraces
        ;
 
 function: 'def' identifier '(' params ')' blockWithBraces;
@@ -12,14 +12,17 @@ identifier: Identifier;
 
 expr: intNumber
     | identifier
-    | '(' expr operator expr ')'
+    | binaryOperation
     ;
+
+binaryOperation: '(' expr operator expr ')'
+               ;
+
 
 block: assignment
      | write
      | read
      | whileStatement
-     | blockWithBraces
      | ifNoElse
      | ifElse
      ;
