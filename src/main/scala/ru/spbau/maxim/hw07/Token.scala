@@ -1,4 +1,4 @@
-package ru.spbau.maxim.hw04
+package ru.spbau.maxim.hw07
 
 sealed abstract class Token(str: String, l: Int, r: Int)
 

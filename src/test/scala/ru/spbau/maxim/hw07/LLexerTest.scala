@@ -1,4 +1,4 @@
-package ru.spbau.maxim.hw04
+package ru.spbau.maxim.hw07
 
 import org.scalatest.{FlatSpec, Matchers}
 

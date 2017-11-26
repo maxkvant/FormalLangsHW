@@ -13,4 +13,4 @@ enablePlugins(Antlr4Plugin)
 antlr4Version in Antlr4 := "4.7"
 antlr4PackageName in Antlr4 := Some("com.simplytyped")
 
-mainClass in (Compile, run) := Some("ru.spbau.maxim.hw04.LLexer")
+mainClass in(Compile, run) := Some("ru.spbau.maxim.hw07.LLexer")
