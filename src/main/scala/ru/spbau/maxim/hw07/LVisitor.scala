@@ -6,7 +6,7 @@ import ru.spbau.maxim.hw07.Token.Statements
 import scala.collection.JavaConverters._
 
 
-class LParser extends LBaseVisitor[Token] {
+class LVisitor extends LBaseVisitor[Token] {
   override def visitExpr(ctx: LParser.ExprContext): Expr = {
     if (ctx.identifier() != null) {
       ExprVariable(visitIdentifier(ctx.identifier()))
@@ -48,17 +48,18 @@ class LParser extends LBaseVisitor[Token] {
     val l = ctx.start.getStartIndex
     val r = ctx.stop.getStopIndex
     IfNoElse(visitExpr(ctx.expr()),
-      visitBlockWithBraces(ctx.blockWithBraces()),
+      visitBlockWithBraces2(ctx.blockWithBraces()),
       l, r)
   }
 
   override def visitIfElse(ctx: LParser.IfElseContext): IfElse = {
+    println(ctx)
     val l = ctx.start.getStartIndex
     val r = ctx.stop.getStopIndex
     val blocks = ctx.blockWithBraces().asScala
     IfElse(visitExpr(ctx.expr()),
-      visitBlockWithBraces(blocks.head),
-      visitBlockWithBraces(blocks(1)),
+      visitBlockWithBraces2(blocks.head),
+      visitBlockWithBraces2(blocks(1)),
       l, r)
   }
 
@@ -66,17 +67,17 @@ class LParser extends LBaseVisitor[Token] {
     val l = ctx.start.getStartIndex
     val r = ctx.stop.getStopIndex
     While(visitExpr(ctx.expr()),
-      visitBlockWithBraces(ctx.blockWithBraces()),
+      visitBlockWithBraces2(ctx.blockWithBraces()),
       l, r)
   }
 
-  override def visitEmptyBlock(ctx: LParser.EmptyBlockContext): Statements = List()
+  def visitEmptyBlock2(ctx: LParser.EmptyBlockContext): Statements = List()
 
-  override def visitBlockWithBraces(ctx: LParser.BlockWithBracesContext): Statements = {
-    visitBlocks(ctx.blocks())
+  def visitBlockWithBraces2(ctx: LParser.BlockWithBracesContext): Statements = {
+    visitBlocks2(ctx.blocks())
   }
 
-  override def visitBlocks(ctx: LParser.BlocksContext): Statements = {
+  def visitBlocks2(ctx: LParser.BlocksContext): Statements = {
     ctx.block().asScala.map(visitBlock).toList
   }
 
@@ -91,8 +92,12 @@ class LParser extends LBaseVisitor[Token] {
       visitWhileStatement(ctx.whileStatement())
     } else if (ctx.ifNoElse() != null) {
       visitIfNoElse(ctx.ifNoElse())
-    } else {
+    } else if (ctx.ifElse() != null) {
       visitIfElse(ctx.ifElse())
+    } else if (ctx.functionCall() != null) {
+      visitFunctionCall(ctx.functionCall())
+    } else {
+      throw new RuntimeException()
     }
   }
 
@@ -114,7 +119,7 @@ class LParser extends LBaseVisitor[Token] {
     val r = ctx.stop.getStopIndex
     val params: List[Identifier] = ctx.params().identifier().asScala.map(visitIdentifier).toList
     val name = visitIdentifier(ctx.identifier())
-    val statements = visitBlockWithBraces(ctx.blockWithBraces())
+    val statements = visitBlockWithBraces2(ctx.blockWithBraces())
     Function(name, params, statements, l, r)
   }
 
@@ -122,7 +127,7 @@ class LParser extends LBaseVisitor[Token] {
     val l = ctx.start.getStartIndex
     val r = ctx.stop.getStopIndex
     val functions = ctx.function().asScala.map(visitFunction).toList
-    val body = visitBlockWithBraces(ctx.blockWithBraces())
+    val body = visitBlockWithBraces2(ctx.blockWithBraces())
     Program(functions, body, l, r)
   }
 }

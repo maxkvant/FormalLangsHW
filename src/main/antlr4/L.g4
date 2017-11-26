@@ -8,23 +8,13 @@ function: 'def' identifier '(' params ')' blockWithBraces;
 params: (identifier (',' identifier)*)?
       ;
 
-identifier: Identifier;
-
-expr: intNumber
-    | identifier
-    | binaryOperation
-    ;
-
-binaryOperation: '(' expr operator expr ')'
-               ;
-
-
 block: assignment
      | write
      | read
      | whileStatement
      | ifNoElse
      | ifElse
+     | functionCall
      ;
 
 functionCall: identifier '(' params ')'
@@ -48,13 +38,23 @@ write: 'write' '(' expr ')'
 read: 'read' '(' identifier ')'
     ;
 
-whileStatement: 'while' '(' expr ')' blockWithBraces;
+whileStatement: 'while' expr blockWithBraces;
 
-ifElse: 'if' '(' expr ')' 'then' blockWithBraces 'else' blockWithBraces
+ifElse: 'if' expr 'then' blockWithBraces 'else' blockWithBraces
       ;
 
-ifNoElse: 'if' '(' expr ')' 'then' blockWithBraces 'else' emptyBlock
+ifNoElse: 'if' expr 'then' blockWithBraces 'else' emptyBlock
       ;
+
+identifier: Identifier;
+
+expr: intNumber
+    | identifier
+    | binaryOperation
+    ;
+
+binaryOperation: '(' expr operator expr ')'
+               ;
 
 intNumber: Digits;
 
@@ -73,7 +73,7 @@ operator: '+'
         | '||'
         ;
 
-Identifier: [_a-zA-Z] ~[ \t\n\r]* ;
+Identifier: [_a-zA-Z] [_a-zA-Z0-9]* ;
 
 Digits
     :   [0-9] ([0-9]*)

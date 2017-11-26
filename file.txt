@@ -1,2 +1,13 @@
- read xx xx ; // asdf[]
- if y + 1.0 == x then write y else write x
+def f ( x, y, z ) {
+  print(z, y);
+}
+
+def g(x) {
+  read(x)
+}
+
+{
+  x := (x + 1);
+  f(z, x);
+  f()
+}
