@@ -49,6 +49,7 @@ class LLexerTest extends FlatSpec with Matchers {
     parse("true") should be(Bool("true", 0, 3) :: Nil)
     parse("false") should be(Bool("false", 0, 4) :: Nil)
     parse("1.0") should be(FloatNumber("1.0", 0, 2) :: Nil)
+    parse("1") should be(IntNumber("1", 0, 0) :: Nil)
     parse("12.3f") should be(FloatNumber("12.3f", 0, 4) :: Nil)
     parse("0.3e-5") should be(FloatNumber("0.3e-5", 0, 5) :: Nil)
   }

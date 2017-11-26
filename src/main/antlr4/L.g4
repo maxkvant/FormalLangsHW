@@ -20,8 +20,11 @@ keyWord: 'if'
        ;
 
 literal: bool
-       | floatNumer
+       | floatNumber
+       | intNumber
        ;
+
+intNumber: Digits;
 
 bool: 'true' | 'false' ;
 
@@ -41,12 +44,13 @@ operator: '+'
         | '<='
         | '&&'
         | '||'
+        | ':='
         ;
 
 WS  :  [ \t\r\n\f]+ -> skip
     ;
 
-floatNumer: FloatingPointLiteral;
+floatNumber: FloatingPointLiteral;
 
 //@see https://github.com/antlr/grammars-v4/blob/master/java/Java.g4
 

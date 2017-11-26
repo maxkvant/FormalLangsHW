@@ -16,4 +16,6 @@ case class Bool(str: String, l: Int, r: Int) extends Literal(str, l, r)
 
 case class FloatNumber(str: String, l: Int, r: Int) extends Literal(str, l, r)
 
+case class IntNumber(str: String, l: Int, r: Int) extends Literal(str, l, r)
+
 case class Comment(str: String, l: Int, r: Int) extends Token(str, l, r)
