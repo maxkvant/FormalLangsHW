@@ -1,23 +1,36 @@
 package ru.spbau.maxim.hw07
 
+import java.io.File
+
 import com.simplytyped.{LLexer, LParser}
+import guru.nidi.graphviz.engine.{Format, Graphviz}
+import guru.nidi.graphviz.parse.Parser
 import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream}
 
 object Main {
   def main(args: Array[String]): Unit = {
-    require(args.length == 1)
+    //require(args.length == 1)
     val filePath = "file.txt"
     //args(0)
     val str = scala.io.Source.fromFile(filePath).mkString
     val tree = parse(str)
     val res = Printer.toStr(parse(str))
-    println(tree)
-    println(res)
+
+    outputPng(res)
 
     import java.io._
-    val pw = new PrintWriter(new File("hello.txt"))
+    val pw = new PrintWriter(new File("output.dot"))
     pw.write(res)
     pw.close()
+  }
+
+  def outputPng(dotStr: String): Unit = {
+    val gr = Parser.read(dotStr)
+    println(gr)
+    val outfile = new File("pngs/out.png")
+    println(Format.PNG)
+    println(outfile)
+    Graphviz.fromGraph(gr).render(Format.PNG).toFile(outfile)
   }
 
   def parse(lStr: String): Program = {

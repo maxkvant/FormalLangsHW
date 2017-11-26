@@ -17,10 +17,14 @@ block: assignment
      | functionCall
      ;
 
-functionCall: identifier '(' params ')'
+functionCall: identifier '(' params ')' ';'
             ;
 
-blocks: block (';' block)* (';')?
+assignment: identifier ':=' expr ';'
+          ;
+
+
+blocks: block block*
       ;
 
 blockWithBraces: '{' blocks '}'
@@ -29,21 +33,18 @@ blockWithBraces: '{' blocks '}'
 emptyBlock: '{' '}'
           ;
 
-assignment: identifier ':=' expr
-          ;
-
-write: 'write' '(' expr ')'
+write: 'write' '(' expr ')' ';'
      ;
 
-read: 'read' '(' identifier ')'
+read: 'read' '(' identifier ')' ';'
     ;
 
 whileStatement: 'while' expr blockWithBraces;
 
-ifElse: 'if' expr 'then' blockWithBraces 'else' blockWithBraces
+ifElse: 'if' expr blockWithBraces 'else' blockWithBraces
       ;
 
-ifNoElse: 'if' expr 'then' blockWithBraces 'else' emptyBlock
+ifNoElse: 'if' expr blockWithBraces 'else' emptyBlock
       ;
 
 identifier: Identifier;
@@ -51,6 +52,7 @@ identifier: Identifier;
 expr: intNumber
     | identifier
     | binaryOperation
+    | '(' expr ')'
     ;
 
 binaryOperation: '(' expr operator expr ')'

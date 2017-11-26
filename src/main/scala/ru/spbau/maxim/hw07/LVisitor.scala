@@ -12,8 +12,10 @@ class LVisitor extends LBaseVisitor[Token] {
       ExprVariable(visitIdentifier(ctx.identifier()))
     } else if (ctx.intNumber() != null) {
       IntLiteral(ctx.getText.toInt, ctx.start.getStartIndex, ctx.stop.getStopIndex)
-    } else {
+    } else if (ctx.binaryOperation() != null) {
       visitBinaryOperation(ctx.binaryOperation())
+    } else {
+      visitExpr(ctx.expr())
     }
   }
 
@@ -53,7 +55,6 @@ class LVisitor extends LBaseVisitor[Token] {
   }
 
   override def visitIfElse(ctx: LParser.IfElseContext): IfElse = {
-    println(ctx)
     val l = ctx.start.getStartIndex
     val r = ctx.stop.getStopIndex
     val blocks = ctx.blockWithBraces().asScala
