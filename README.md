@@ -1,7 +1,7 @@
 # FormalLangsHW
 
 
-### L Lexer
+### L Parser
 
 run:
 

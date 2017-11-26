@@ -25,10 +25,8 @@ object Main {
 
   def outputPng(dotStr: String): Unit = {
     val gr = Parser.read(dotStr)
-    println(gr)
     val outfile = new File("pngs/out.png")
     println(Format.PNG)
-    println(outfile)
     Graphviz.fromGraph(gr).render(Format.PNG).toFile(outfile)
   }
 
