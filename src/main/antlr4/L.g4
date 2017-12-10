@@ -5,8 +5,12 @@ program: function* blockWithBraces
 
 function: 'def' identifier '(' params ')' blockWithBraces;
 
+callParams: (expr (',' expr)*)?
+      ;
+
 params: (identifier (',' identifier)*)?
       ;
+
 
 block: assignment
      | write
@@ -17,18 +21,21 @@ block: assignment
      | functionCall
      ;
 
-functionCall: identifier '(' params ')' ';'
+functionCall: identifier '(' callParams ')' ';'
             ;
 
 assignment: identifier ':=' expr ';'
           ;
 
 
-blocks: block block*
+blocks: block*
       ;
 
 blockWithBraces: '{' blocks '}'
-                 ;
+               ;
+
+nonEmptyBlockWithBraces: '{' block blocks '}'
+                       ;
 
 emptyBlock: '{' '}'
           ;
@@ -41,7 +48,7 @@ read: 'read' '(' identifier ')' ';'
 
 whileStatement: 'while' expr blockWithBraces;
 
-ifElse: 'if' expr blockWithBraces 'else' blockWithBraces
+ifElse: 'if' expr blockWithBraces 'else' nonEmptyBlockWithBraces
       ;
 
 ifNoElse: 'if' expr blockWithBraces 'else' emptyBlock

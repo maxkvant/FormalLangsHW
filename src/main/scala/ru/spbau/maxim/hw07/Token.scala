@@ -3,6 +3,7 @@ package ru.spbau.maxim.hw07
 object Token {
   type Statements = List[Statement]
   type Params = List[Identifier]
+  type CallParams = List[Expr]
   type Functions = List[Function]
 }
 
@@ -22,11 +23,18 @@ case class Identifier(name: String,
   override def toTreeList: List[AnyRef] = List(this.name)
 }
 
-case class Program(functions: Functions,
-                   body: Statements,
-                   override val l: Int, override val r: Int) extends Token(l, r) {
-  override def toTreeList: List[AnyRef] = functions ++ body
+
+case class Block(statements: Statements,
+                 override val l: Int, override val r: Int) extends Token(l, r) {
+  override def toTreeList: List[AnyRef] = statements
 }
+
+case class Program(functions: Functions,
+                   body: Block,
+                   override val l: Int, override val r: Int) extends Token(l, r) {
+  override def toTreeList: List[AnyRef] = functions ++ List(body)
+}
+
 
 //Expressions
 
@@ -63,9 +71,9 @@ case class Assignment(identifier: Identifier,
 }
 
 case class While(condition: Expr,
-                 statements: Statements,
+                 block: Block,
                  override val l: Int, override val r: Int) extends Statement(l, r) {
-  override def toTreeList: List[AnyRef] = List("while", "(", condition, ")") ++ statements
+  override def toTreeList: List[AnyRef] = List(condition, block)
 }
 
 case class Read(identifier: Identifier,
@@ -80,32 +88,28 @@ case class Write(expr: Expr,
 
 
 case class IfNoElse(condition: Expr,
-                    statements: Statements,
+                    block: Block,
                     override val l: Int, override val r: Int) extends Statement(l, r) {
-  override def toTreeList: List[AnyRef] = List("if", condition, "then") ++ statements
+  override def toTreeList: List[AnyRef] = List(condition, block)
 }
 
 case class IfElse(condition: Expr,
-                  statementsIf: Statements,
-                  statementsElse: Statements,
+                  blockIf: Block,
+                  blockElse: Block,
                   override val l: Int, override val r: Int) extends Statement(l, r) {
-  override def toTreeList: List[AnyRef] =
-    List("if", condition, "then") ++
-      statementsIf ++
-      List("else") ++
-      statementsElse
+  override def toTreeList: List[AnyRef] = List(condition, blockIf, blockElse)
 }
 
 //Functions
 
 case class Function(name: Identifier,
                     params: Params,
-                    statements: Statements,
+                    block: Block,
                     override val l: Int, override val r: Int) extends Statement(l, r) {
-  override def toTreeList: List[AnyRef] = List(name, "(") ++ params ++ List(")") ++ statements
+  override def toTreeList: List[AnyRef] = List(name) ++ params ++ List(block)
 }
 
-case class FunctionCall(name: Identifier, params: Params,
+case class FunctionCall(name: Identifier, params: CallParams,
                         override val l: Int, override val r: Int) extends Statement(l, r) {
-  override def toTreeList: List[AnyRef] = List(name, "(") ++ params ++ List(")")
+  override def toTreeList: List[AnyRef] = List(name) ++ params
 }

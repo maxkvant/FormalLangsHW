@@ -57,11 +57,18 @@ class LVisitor extends LBaseVisitor[Token] {
   override def visitIfElse(ctx: LParser.IfElseContext): IfElse = {
     val l = ctx.start.getStartIndex
     val r = ctx.stop.getStopIndex
-    val blocks = ctx.blockWithBraces().asScala
+    val blockIf = ctx.blockWithBraces()
+    val blockElse = ctx.nonEmptyBlockWithBraces()
     IfElse(visitExpr(ctx.expr()),
-      visitBlockWithBraces2(blocks.head),
-      visitBlockWithBraces2(blocks(1)),
+      visitBlockWithBraces2(blockIf),
+      visitNonEmptyBlockWithBraces(blockElse),
       l, r)
+  }
+
+  override def visitNonEmptyBlockWithBraces(ctx: LParser.NonEmptyBlockWithBracesContext): Block = {
+    val l = ctx.start.getStartIndex
+    val r = ctx.stop.getStopIndex
+    Block(visitBlocks2(ctx.blocks()), l, r)
   }
 
   override def visitWhileStatement(ctx: LParser.WhileStatementContext): While = {
@@ -72,10 +79,16 @@ class LVisitor extends LBaseVisitor[Token] {
       l, r)
   }
 
-  def visitEmptyBlock2(ctx: LParser.EmptyBlockContext): Statements = List()
+  def visitEmptyBlock2(ctx: LParser.EmptyBlockContext): Block = {
+    val l = ctx.start.getStartIndex
+    val r = ctx.stop.getStopIndex
+    Block(List(), l, r)
+  }
 
-  def visitBlockWithBraces2(ctx: LParser.BlockWithBracesContext): Statements = {
-    visitBlocks2(ctx.blocks())
+  def visitBlockWithBraces2(ctx: LParser.BlockWithBracesContext): Block = {
+    val l = ctx.start.getStartIndex
+    val r = ctx.stop.getStopIndex
+    Block(visitBlocks2(ctx.blocks()), l, r)
   }
 
   def visitBlocks2(ctx: LParser.BlocksContext): Statements = {
@@ -105,7 +118,7 @@ class LVisitor extends LBaseVisitor[Token] {
   override def visitFunctionCall(ctx: LParser.FunctionCallContext): FunctionCall = {
     val l = ctx.start.getStartIndex
     val r = ctx.stop.getStopIndex
-    val params: List[Identifier] = ctx.params().identifier().asScala.map(visitIdentifier).toList
+    val params: List[Expr] = ctx.callParams().expr().asScala.map(visitExpr).toList
     val name = visitIdentifier(ctx.identifier())
     FunctionCall(name, params, l, r)
   }
