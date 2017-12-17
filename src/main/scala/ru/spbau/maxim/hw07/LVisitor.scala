@@ -68,7 +68,7 @@ class LVisitor extends LBaseVisitor[Token] {
   override def visitNonEmptyBlockWithBraces(ctx: LParser.NonEmptyBlockWithBracesContext): Block = {
     val l = ctx.start.getStartIndex
     val r = ctx.stop.getStopIndex
-    Block(visitBlocks2(ctx.blocks()), l, r)
+    Block(List(visitBlock(ctx.block())) ++ visitBlocks2(ctx.blocks()), l, r)
   }
 
   override def visitWhileStatement(ctx: LParser.WhileStatementContext): While = {
@@ -151,15 +151,13 @@ class LVisitor extends LBaseVisitor[Token] {
     val l = ctx.start.getStartIndex
     val r = ctx.stop.getStopIndex
     val body = visitBlockWithBraces2(ctx.blockWithBraces())
-    Program(visitFunctionDefs(ctx.functionDefs()),
+    Program(visitFunctionDefs(ctx.functionDefs(), body.l - 1),
       body,
       l, r)
   }
 
-  override def visitFunctionDefs(ctx: LParser.FunctionDefsContext): FunctionDefs = {
-    val l = ctx.start.getStartIndex
-    val r = ctx.stop.getStopIndex
+  def visitFunctionDefs(ctx: LParser.FunctionDefsContext, r: Int): FunctionDefs = {
     val functions = ctx.function().asScala.map(visitFunction).toList
-    FunctionDefs(functions, l, r)
+    FunctionDefs(functions, 0, r)
   }
 }

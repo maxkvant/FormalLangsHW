@@ -6,15 +6,12 @@ program: functionDefs blockWithBraces
 functionDefs: function*
             ;
 
-body: blockWithBraces
-    ;
+function: 'def' identifier params blockWithBraces;
 
-function: 'def' identifier '(' params ')' blockWithBraces;
-
-callParams: (expr (',' expr)*)?
+callParams: '(' (expr (',' expr)*)? ')'
       ;
 
-params: (identifier (',' identifier)*)?
+params: '(' (identifier (',' identifier)*)? ')'
       ;
 
 
@@ -27,7 +24,7 @@ block: assignment
      | functionCall
      ;
 
-functionCall: identifier '(' callParams ')' ';'
+functionCall: identifier callParams  ';'
             ;
 
 assignment: identifier ':=' expr ';'

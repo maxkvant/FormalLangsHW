@@ -12,8 +12,8 @@ object Main {
     require(args.length == 1)
     val filePath = args(0)
     val str = scala.io.Source.fromFile(filePath).mkString
-    val tree = parse(str)
-    val res = Printer.toStr(parse(str))
+    val tree = parseProgram(str)
+    val res = Printer.toStr(parseProgram(str))
 
     import java.io._
     val pw = new PrintWriter(new File("output.dot"))
@@ -30,7 +30,7 @@ object Main {
     Graphviz.fromGraph(gr).render(Format.PNG).toFile(outfile)
   }
 
-  def parse(lStr: String): Program = {
+  def parseProgram(lStr: String): Program = {
     val input = new ANTLRInputStream(lStr)
     val lexer = new LLexer(input)
     val lexerTokens = new CommonTokenStream(lexer)
