@@ -6,7 +6,7 @@ comment: LineComment ;
 LineComment:  '//' ~[\n\r]* ;
 
 identifier: Identifier ;
-Identifier: [_a-zA-Z] ~[ \t\n\r]* ;
+Identifier: [_a-zA-Z] [_a-zA-Z0-9]* ;
 
 keyWord: 'if'
        | 'then'
