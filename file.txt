@@ -1,4 +1,5 @@
 def f ( x, y, z ) {
+  write ((x+1));
   print(z, y);
 }
 

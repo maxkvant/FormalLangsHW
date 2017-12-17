@@ -1,7 +1,13 @@
 grammar L;
 
-program: function* blockWithBraces
+program: functionDefs blockWithBraces
        ;
+
+functionDefs: function*
+            ;
+
+body: blockWithBraces
+    ;
 
 function: 'def' identifier '(' params ')' blockWithBraces;
 
@@ -40,7 +46,7 @@ nonEmptyBlockWithBraces: '{' block blocks '}'
 emptyBlock: '{' '}'
           ;
 
-write: 'write' '(' expr ')' ';'
+write: 'write' expr ';'
      ;
 
 read: 'read' '(' identifier ')' ';'

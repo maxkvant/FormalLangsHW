@@ -123,6 +123,13 @@ class LVisitor extends LBaseVisitor[Token] {
     FunctionCall(name, params, l, r)
   }
 
+  override def visitParams(ctx: LParser.ParamsContext): Params = {
+    val l = ctx.start.getStartIndex
+    val r = ctx.stop.getStopIndex
+    val params: List[Identifier] = ctx.identifier().asScala.map(visitIdentifier).toList
+    Params(params, l, r)
+  }
+
   override def visitIdentifier(ctx: LParser.IdentifierContext): Identifier = {
     Identifier(ctx.getText,
       ctx.start.getStartIndex, ctx.stop.getStopIndex)
@@ -134,14 +141,25 @@ class LVisitor extends LBaseVisitor[Token] {
     val params: List[Identifier] = ctx.params().identifier().asScala.map(visitIdentifier).toList
     val name = visitIdentifier(ctx.identifier())
     val statements = visitBlockWithBraces2(ctx.blockWithBraces())
-    Function(name, params, statements, l, r)
+    Function(visitIdentifier(ctx.identifier()),
+      visitParams(ctx.params()),
+      statements,
+      l, r)
   }
 
   override def visitProgram(ctx: LParser.ProgramContext): Program = {
     val l = ctx.start.getStartIndex
     val r = ctx.stop.getStopIndex
-    val functions = ctx.function().asScala.map(visitFunction).toList
     val body = visitBlockWithBraces2(ctx.blockWithBraces())
-    Program(functions, body, l, r)
+    Program(visitFunctionDefs(ctx.functionDefs()),
+      body,
+      l, r)
+  }
+
+  override def visitFunctionDefs(ctx: LParser.FunctionDefsContext): FunctionDefs = {
+    val l = ctx.start.getStartIndex
+    val r = ctx.stop.getStopIndex
+    val functions = ctx.function().asScala.map(visitFunction).toList
+    FunctionDefs(functions, l, r)
   }
 }

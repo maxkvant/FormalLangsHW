@@ -2,7 +2,6 @@ package ru.spbau.maxim.hw07
 
 object Token {
   type Statements = List[Statement]
-  type Params = List[Identifier]
   type CallParams = List[Expr]
   type Functions = List[Function]
 }
@@ -29,12 +28,11 @@ case class Block(statements: Statements,
   override def toTreeList: List[AnyRef] = statements
 }
 
-case class Program(functions: Functions,
+case class Program(functions: FunctionDefs,
                    body: Block,
                    override val l: Int, override val r: Int) extends Token(l, r) {
-  override def toTreeList: List[AnyRef] = functions ++ List(body)
+  override def toTreeList: List[AnyRef] = List(functions, body)
 }
-
 
 //Expressions
 
@@ -78,7 +76,7 @@ case class While(condition: Expr,
 
 case class Read(identifier: Identifier,
                 override val l: Int, override val r: Int) extends Statement(l, r) {
-  override def toTreeList: List[AnyRef] = List(identifier.name)
+  override def toTreeList: List[AnyRef] = List(identifier)
 }
 
 case class Write(expr: Expr,
@@ -106,10 +104,20 @@ case class Function(name: Identifier,
                     params: Params,
                     block: Block,
                     override val l: Int, override val r: Int) extends Statement(l, r) {
-  override def toTreeList: List[AnyRef] = List(name) ++ params ++ List(block)
+  override def toTreeList: List[AnyRef] = List(name, params, block)
+}
+
+case class Params(params: List[Identifier],
+                  override val l: Int, override val r: Int) extends Token(l, r) {
+  override def toTreeList: List[AnyRef] = params
 }
 
 case class FunctionCall(name: Identifier, params: CallParams,
                         override val l: Int, override val r: Int) extends Statement(l, r) {
   override def toTreeList: List[AnyRef] = List(name) ++ params
+}
+
+case class FunctionDefs(functions: Functions,
+                        override val l: Int, override val r: Int) extends Token(l, r) {
+  override def toTreeList: List[AnyRef] = functions
 }
